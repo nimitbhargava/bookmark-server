@@ -4,7 +4,7 @@ import http.server
 import requests
 from urllib.parse import unquote, parse_qs
 
-memory = {} 
+memory = {}
 
 form = '''<!DOCTYPE html>
 <title>Bookmark Server</title>
@@ -46,8 +46,9 @@ class Shortener(http.server.BaseHTTPRequestHandler):
         if name:
             if name in memory:
                 # 2. Send a 303 redirect to the long URI in memory[name].
-                #    Delete the following line.
-                raise NotImplementedError("Step 2 isn't written yet.")
+                self.send_response(303)  # redirect via GET
+                self.send_header('Location', memory[name])
+                self.end_headers()
             else:
                 # We don't know that name! Send a 404 error.
                 self.send_response(404)
@@ -90,7 +91,6 @@ class Shortener(http.server.BaseHTTPRequestHandler):
             self.end_headers()
         else:
             # Didn't successfully fetch the long URI.
-
             # 5. Send a 404 error with a useful message.
             #    Delete the following line.
             raise NotImplementedError("Step 5 isn't written yet!")
