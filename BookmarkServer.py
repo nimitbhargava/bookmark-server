@@ -52,8 +52,8 @@ class Shortener(http.server.BaseHTTPRequestHandler):
 
         if name:
             if name in memory:
-                # 2. Send a 303 redirect to the long URI in memory[name].
-                self.send_response(303)  # redirect via GET
+                # We know that name! Send a redirect to it.
+                self.send_response(303)
                 self.send_header('Location', memory[name])
                 self.end_headers()
             else:
@@ -80,11 +80,11 @@ class Shortener(http.server.BaseHTTPRequestHandler):
 
         # Check that the user submitted the form fields.
         if "longuri" not in params or "shortname" not in params:
-            # 3. Serve a 400 error with a useful message.
             self.send_response(400)
-            self.send_header('Content-type', 'text/plan; charset=utf-8')
+            self.send_header('Content-type', 'text/plain; charset=utf-8')
             self.end_headers()
-            self.wfile.write("Missing form fields".encode())
+            self.wfile.write("Missing form fields!".encode())
+            return
 
         longuri = params["longuri"][0]
         shortname = params["shortname"][0]
@@ -93,9 +93,8 @@ class Shortener(http.server.BaseHTTPRequestHandler):
             # This URI is good!  Remember it under the specified name.
             memory[shortname] = longuri
 
-            # 4. Serve a redirect to the root page (the form).
-            # Send a 303 back to the root page
-            self.send_response(303)  # redirect via GET
+            # Serve a redirect to the form.
+            self.send_response(303)
             self.send_header('Location', '/')
             self.end_headers()
         else:
